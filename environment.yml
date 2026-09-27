@@ -132,7 +132,6 @@ dependencies:
       - tomli==2.3.0
       - torch==2.8.0
       - torch-cluster==1.6.3
-      - torch-geometric==2.6.1
       - torch-scatter==2.1.2+pt28cu128
       - torch-sparse==0.6.18
       - torchvision==0.23.0
