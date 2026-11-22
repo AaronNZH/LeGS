@@ -29,17 +29,19 @@ cd LeGS
 
 ### ⚙️ Environment Setup
 
-We provide a streamlined setup using Conda:
+Create the Conda environment, then build the CUDA extensions from the repository root. The environment targets Python 3.7 and PyTorch 1.12.1 with CUDA 11.6. Use an NVIDIA driver compatible with CUDA 11.6 and a CUDA 11.6 development toolkit (including `nvcc`) with a supported host C++ compiler. Conda's `cudatoolkit` runtime alone does not provide the compiler. If needed, set `CUDA_HOME` to the development toolkit path.
 
-```shell
-# Windows only
-SET DISTUTILS_USE_SDK=1
-
-# Create and activate environment
+```bash
 conda env create --file environment.yml
-conda activate LeGS
-pip install submodules/diff-gaussian-rasterization_fastgs submodules/simple-knn submodules/fused-ssim --no-build-isolation
+conda activate fastgs
+python -c "import sys, torch; print(sys.version.split()[0], torch.__version__, torch.version.cuda); assert sys.version_info[:2] == (3, 7); assert torch.__version__.split('+')[0] == '1.12.1' and torch.version.cuda == '11.6', 'Expected PyTorch 1.12.1 with CUDA 11.6'"
+"${CUDA_HOME:+$CUDA_HOME/bin/}nvcc" --version | grep -F 'release 11.6,'
+python -m pip install --no-index --only-binary=:all: --find-links 'https://data.pyg.org/whl/torch-1.12.1+cu116.html' 'torch-scatter==2.1.0+pt112cu116'
+python -m pip install --no-build-isolation submodules/diff-gaussian-rasterization_fastgs submodules/simple-knn submodules/fused-ssim
+python -c "from torch_scatter import scatter_add; import diff_gaussian_rasterization_fastgs, simple_knn._C, fused_ssim"
 ```
+
+On Windows, use a shell with the supported Visual Studio build tools initialized and set `DISTUTILS_USE_SDK=1` before building the extensions (in Command Prompt, `set DISTUTILS_USE_SDK=1`).
 
 ### 📂 Dataset Organization
 
@@ -63,11 +65,15 @@ The MipNeRF360 scenes are hosted by the paper authors [here](https://jonbarron.i
 
 ## 🎯 Training & Evaluation
 
-Remember to modify the script to point to your dataset directory:
+Edit the dataset paths in `train.sh`, then run it with a fresh output directory. The launcher defaults to `output/rl` and does not overwrite earlier runs:
 
 ```bash
 bash train.sh
+# To start another run without moving the first:
+LEGS_OUTPUT_ROOT=output/rl-rerun bash train.sh
 ```
+
+The full-suite report requires valid 30,000-iteration test metrics and training statistics for every scene. It reports missing or invalid scenes instead of averaging them as zeros. To report an existing run separately, use `python report_results.py`, or prefix it with the same `LEGS_OUTPUT_ROOT` value used for that run.
 
 <details>
 <summary><span style="font-weight: bold;">📋 Advanced: Command Line Arguments for train.py</span></summary>

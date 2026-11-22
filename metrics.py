@@ -25,7 +25,11 @@ def readImages(renders_dir, gt_dir):
     renders = []
     gts = []
     image_names = []
-    for fname in os.listdir(renders_dir):
+    render_names = os.listdir(renders_dir)
+    gt_names = set(os.listdir(gt_dir))
+    if not render_names or set(render_names) != gt_names:
+        raise ValueError(f"Expected matching nonempty render and ground-truth sets in {renders_dir.parent}")
+    for fname in render_names:
         render = Image.open(renders_dir / fname)
         gt = Image.open(gt_dir / fname)
         renders.append(tf.to_tensor(render).unsqueeze(0)[:, :3, :, :].cuda())
@@ -89,8 +93,8 @@ def evaluate(model_paths):
                 json.dump(full_dict[scene_dir], fp, indent=True)
             with open(scene_dir + "/per_view.json", 'w') as fp:
                 json.dump(per_view_dict[scene_dir], fp, indent=True)
-        except:
-            print("Unable to compute metrics for model", scene_dir)
+        except Exception as exc:
+            raise RuntimeError(f"Unable to compute metrics for model {scene_dir}: {exc}") from exc
 
 if __name__ == "__main__":
     device = torch.device("cuda:0")
