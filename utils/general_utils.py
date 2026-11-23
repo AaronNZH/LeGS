@@ -37,9 +37,6 @@ def cosine_annealing(step, total_steps, initial_temp=1.0, final_temp=0.01):
     temp = final_temp + (initial_temp - final_temp) * cos_val
     return temp
 
-def identity_gate(x):
-    return x
-
 def inverse_sigmoid(x):
     return torch.log(x/(1-x))
 

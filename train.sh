@@ -13,7 +13,7 @@ echo "mipnerf开始时间: $(date '+%Y-%m-%d %H:%M:%S')"
 start=$(date +%s)
 OAR_JOB_ID=bicycle python train.py -s /data2/ningzhh/data/mipnerf360/bicycle -m "$output_root/bicycle" -i images_4 --eval --densification_interval 100  --optimizer_type default  --grad_abs_thresh 0.0004
 OAR_JOB_ID=flowers python train.py -s /data2/ningzhh/data/mipnerf360/flowers -m "$output_root/flowers" -i images_4 --eval --densification_interval 100  --optimizer_type default --grad_abs_thresh 0.0004
-OAR_JOB_ID=garden python train.py -s /data2/ningzhh/data/mipnerf360/garden -m "$output_root/garden" -i images_4 --eval --densification_interval 100  --optimizer_type default  --highfeature_lr 0.02 --loss_thresh 0.06  --grad_abs_thresh 0.0002
+OAR_JOB_ID=garden python train.py -s /data2/ningzhh/data/mipnerf360/garden -m "$output_root/garden" -i images_4 --eval --densification_interval 100  --optimizer_type default  --highfeature_lr 0.02  --grad_abs_thresh 0.0002
 OAR_JOB_ID=stump python train.py -s /data2/ningzhh/data/mipnerf360/stump -m "$output_root/stump" -i images_4 --eval --densification_interval 100  --optimizer_type default --grad_abs_thresh 0.0004
 OAR_JOB_ID=treehill python train.py -s /data2/ningzhh/data/mipnerf360/treehill -m "$output_root/treehill" -i images_4 --eval --densification_interval 100  --optimizer_type default --grad_abs_thresh 0.0005
 OAR_JOB_ID=room python train.py -s /data2/ningzhh/data/mipnerf360/room -m "$output_root/room" -i images_2 --eval --densification_interval 100  --optimizer_type default --highfeature_lr 0.02 --grad_abs_thresh 0.0002

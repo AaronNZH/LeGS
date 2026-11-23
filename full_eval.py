@@ -36,7 +36,7 @@ grad_thresh = {
 special_args = {
     "bicycle": "",
     "flowers": " --dense 0.005 ",
-    "garden": " --highfeature_lr 0.02 --loss_thresh 0.06 ",
+    "garden": " --highfeature_lr 0.02 ",
     "stump": " --dense 0.004 ",
     "treehill": " --dense 0.01 ",
     "room": " --highfeature_lr 0.02 ",
@@ -55,11 +55,7 @@ parser.add_argument("--skip_rendering", action="store_true")
 parser.add_argument("--skip_metrics", action="store_true")
 parser.add_argument("--output_path", default="./eval")
 parser.add_argument("--optimizer_type", type=str, default="default")
-parser.add_argument("--sh_lower", action="store_true")
 parser.add_argument("--dry_run", action="store_true")
-parser.add_argument("--addition_args", type=str, default="")
-parser.add_argument("--densification_interval_list", nargs="+", type=int, default=[100,])
-parser.add_argument("--rl", action="store_true")
 args, _ = parser.parse_known_args()
 
 all_scenes = []
@@ -87,9 +83,6 @@ db_timing = 0.
 if not args.skip_training:
     common_args = " --quiet --eval "
     common_args += " --optimizer_type {}".format(args.optimizer_type)
-    
-    if args.sh_lower:
-        common_args += " --sh_lower"
 
     for scene in all_scenes:
         start_time = time.time()

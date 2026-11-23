@@ -63,11 +63,9 @@ class ModelParams(ParamGroup):
 
 class PipelineParams(ParamGroup):
     def __init__(self, parser):
-        self.separate_sh = True
         self.convert_SHs_python = False
         self.compute_cov3D_python = False
         self.debug = False
-        self.antialiasing = False
         super().__init__(parser, "Pipeline Parameters")
 
 class OptimizationParams(ParamGroup):
@@ -77,38 +75,23 @@ class OptimizationParams(ParamGroup):
         self.position_lr_final = 0.0000016
         self.position_lr_delay_mult = 0.01
         self.position_lr_max_steps = self.iterations
-        self.feature_lr = 0.0025 
-        self.shfeature_lr = 0.005 
         self.opacity_lr = 0.025 
         self.scaling_lr = 0.005
         self.rotation_lr = 0.001
-        self.percent_dense = 0.001
         self.lambda_dssim = 0.2
         self.densification_interval = 100
         self.opacity_reset_interval = 3000
         self.densify_from_iter = 500
         self.densify_until_iter = 15_000
-        self.densify_grad_threshold = 0.0002
         self.random_background = False
 
-        self.prune_until_iter = 25000
-        self.min_weight = 0.7
-
-        self.prune_from_iter = 6000
-        self.prune_until_iter = self.iterations
-        self.prune_interval = 3000
-        self.densify_prune_ratio = 0.45
-        self.after_densify_prune_ratio = 0.01
-        
         # fastgs parameters
-        self.loss_thresh = 0.1
         self.grad_abs_thresh = 0.0012
         self.highfeature_lr = 0.005
         self.lowfeature_lr = 0.0025
         self.grad_thresh = 0.0002
         self.dense = 0.001
         self.mult = 0.5      # multiplier for the compact box to control the tile number of each splat
-        self.fastgs_importance_score_thresh = 5
 
         ### rl parameters
         self.grad_thresh = 0.0001
@@ -134,7 +117,6 @@ class OptimizationParams(ParamGroup):
         self.rl_reward_norm = True
         self.rl_use_mixed_precision = True
         self.verbose = False
-        self.use_validate_cam_list = False
         self.rl_inference_only = False
 
         self.rl_state_dim = 11
@@ -146,7 +128,6 @@ class OptimizationParams(ParamGroup):
         self.rl_gamma = 0.99
         self.rl_gae_lambda = 0.95
         self.rl_policy_clip = 0.2
-        self.metric_map_ssim_lambda = 0.2
         self.entropy_loss_init = 0
         self.entropy_loss_final = 0
         self.my_min_opacity_init = 0.005

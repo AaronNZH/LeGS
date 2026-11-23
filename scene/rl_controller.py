@@ -207,19 +207,6 @@ class GaussianDensificationController:
 
         self.transition = defaultdict(list)
         
-    def _log_cuda_mem(self, tag):
-        """打印当前和峰值显存（MB）"""
-        try:
-            if torch.cuda.is_available():
-                torch.cuda.synchronize()
-                alloc = torch.cuda.memory_allocated()
-                reserved = torch.cuda.memory_reserved()
-                peak_alloc = torch.cuda.max_memory_allocated()
-                peak_reserved = torch.cuda.max_memory_reserved()
-                print(f"[MEM][{tag}] alloc={alloc/1e6:.1f}MB, reserved={reserved/1e6:.1f}MB, peak_alloc={peak_alloc/1e6:.1f}MB, peak_reserved={peak_reserved/1e6:.1f}MB")
-        except Exception as _:
-            pass
-    
     def store_transition(self, state, action, reward, parent_mapping, **kwargs):
         self.transition["state_list"].append(state.cpu())
         self.transition["action_list"].append(action.cpu())
@@ -542,20 +529,6 @@ class GaussianDensificationController:
             tb_writer.add_scalar("rl/ratio_avg", ratio_avg, iteration)
             tb_writer.add_scalar("rl/value_mean", all_values.mean().item(), iteration)
             tb_writer.add_scalar("rl/value_std", all_values.std().item(), iteration)
-
-    def save_models(self, path):
-        payload = {
-            'actor': self.actor.state_dict(),
-        }
-        if not self.use_my_value:
-            payload['critic'] = self.critic.state_dict()
-        torch.save(payload, path)
-        
-    def load_models(self, path):
-        checkpoint = torch.load(path)
-        self.actor.load_state_dict(checkpoint['actor'])
-        if not self.use_my_value and 'critic' in checkpoint:
-            self.critic.load_state_dict(checkpoint['critic'])
 
     def training_setup(self, training_args):
         self.actor_lr_scheduler = get_expon_lr_func(

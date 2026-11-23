@@ -11,7 +11,7 @@
 
 import torch
 import numpy as np
-from utils.general_utils import inverse_sigmoid, get_expon_lr_func, build_rotation, identity_gate
+from utils.general_utils import inverse_sigmoid, get_expon_lr_func, build_rotation
 from torch import nn
 import os
 from utils.system_utils import mkdir_p
@@ -45,12 +45,6 @@ class GaussianModel:
 
         self.rotation_activation = torch.nn.functional.normalize
 
-    def modify_functions(self):
-        old_opacities = self.get_opacity.clone()
-        self.opacity_activation = torch.abs
-        self.inverse_opacity_activation = identity_gate
-        self._opacity = self.opacity_activation(old_opacities)
-
     def __init__(self, sh_degree, optimizer_type="default", training_args=None):
         self.active_sh_degree = 0
         self.optimizer_type = optimizer_type
@@ -67,7 +61,6 @@ class GaussianModel:
         self.denom = torch.empty(0)
         self.optimizer = None
         self.shoptimizer = None
-        self.percent_dense = 0
         self.spatial_lr_scale = 0
 
         self.training_args = training_args
@@ -234,7 +227,6 @@ class GaussianModel:
         self.max_radii2D = torch.zeros((self.get_xyz.shape[0]), device="cuda")
 
     def training_setup(self, training_args):
-        self.percent_dense = training_args.percent_dense
         self.xyz_gradient_accum = torch.zeros((self.get_xyz.shape[0], 1), device="cuda")
         self.xyz_gradient_accum_abs = torch.zeros((self.get_xyz.shape[0], 1), device="cuda")
         self.denom = torch.zeros((self.get_xyz.shape[0], 1), device="cuda")

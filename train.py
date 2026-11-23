@@ -9,7 +9,7 @@
 # For inquiries contact  george.drettakis@inria.fr
 #
 
-import os, random, time, shutil, pathlib, sys
+import os, random, time, sys
 import torch
 import numpy as np
 import json
@@ -35,37 +35,6 @@ except ImportError:
 from utils.camera_utils import sampling_cameras
 from utils.rl_utils import get_metric_score, get_gaussians_state_for_rl
 from utils.general_utils import cosine_annealing
-
-
-def saveRuntimeCode(dst: str) -> None:
-    """
-    备份运行时代码到输出目录，排除output文件夹
-    """
-    additionalIgnorePatterns = ['.git', '.gitignore', 'output']
-    ignorePatterns = set()
-    ROOT = '.'
-    
-    # 读取.gitignore文件中的忽略模式
-    if os.path.exists(os.path.join(ROOT, '.gitignore')):
-        with open(os.path.join(ROOT, '.gitignore')) as gitIgnoreFile:
-            for line in gitIgnoreFile:
-                if not line.startswith('#') and line.strip():
-                    if line.endswith('\n'):
-                        line = line[:-1]
-                    if line.endswith('/'):
-                        line = line[:-1]
-                    ignorePatterns.add(line)
-    
-    # 添加额外的忽略模式
-    ignorePatterns = list(ignorePatterns)
-    for additionalPattern in additionalIgnorePatterns:
-        ignorePatterns.append(additionalPattern)
-
-    log_dir = pathlib.Path(__file__).parent.resolve()
-    
-    # 执行备份
-    shutil.copytree(log_dir, dst, ignore=shutil.ignore_patterns(*ignorePatterns))
-    print('Backup Finished! Code backed up to:', dst)
 
 
 def training(dataset, opt, pipe, testing_iterations, saving_iterations, checkpoint_iterations, checkpoint, debug_from, websockets, rl_controller_path=None):
@@ -453,7 +422,6 @@ if __name__ == "__main__":
     parser.add_argument("--checkpoint_iterations", nargs="+", type=int, default=[30_000])
     parser.add_argument("--start_checkpoint", type=str, default = None)
     parser.add_argument("--websockets", action='store_true', default=False)
-    parser.add_argument("--benchmark_dir", type=str, default=None)
     parser.add_argument("--rl_controller_path", type=str, default=None)
     args = parser.parse_args(sys.argv[1:])
     args.save_iterations.append(args.iterations)

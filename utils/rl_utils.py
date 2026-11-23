@@ -1,19 +1,9 @@
 import torch
-from fused_ssim import FusedSSIMMap
 from fused_ssim import fused_ssim as fast_ssim
 from utils.image_utils import psnr
 
 from gaussian_renderer import render_fastgs
 from utils.loss_utils import l1_loss
-
-
-def fast_ssim_map(img1, img2, padding="same", train=True):
-    C1 = 0.01 ** 2
-    C2 = 0.03 ** 2
-
-    img1 = img1.contiguous()
-    map = FusedSSIMMap.apply(C1, C2, img1, img2, padding, train)
-    return map.mean(0)
 
 
 def sign_log1p(x):
